@@ -1,7 +1,7 @@
 /**
  * @file 移动端分享组件
  * @author cgzero(cgzero@cgzero.com)
- * @date 2016-09-18
+ * @date 2016-10-11
  */
 
 /* globals ucweb, ucbrowser, browser */
@@ -105,6 +105,7 @@
 
         extend(this.opts, opts);
 
+        // 如果是QQ浏览器，则先加载必要的资源
         if (isqqBrowser) {
             var script = document.createElement('script');
             var doc = document.getElementsByTagName('body')[0];
@@ -119,13 +120,14 @@
         /**
          * 分享到
          *
+         * @public
          * @param {string} shareMedia 需要分享到的应用
          *     weibo: 新浪微博
          *     weixin: 微信
          *     weixinfriend: 微信朋友
          *     qq: QQ
          *     all: 打开分享面板自由选择
-         * @param {string=} opts 分享参数，与构造函数一致
+         * @param {string=} opts 分享参数，与MShare构造函数一致
          */
         shareTo: function (shareMedia, opts) {
             shareMedia = shareMedia || 'all';
@@ -148,10 +150,10 @@
 
         /**
          * 使用UC浏览器分享
-         * 注：分享时如果使用app分享则无法指定图片，UC会默认截取当页图片；采用web分享不受限制
          *
+         * @public
          * @param {string} shareMedia 需要分享到的应用
-         * @param {string=} opts 分享参数，与构造函数一致
+         * @param {string=} opts 分享参数，与MShare构造函数一致
          */
         ucShareTo: function (shareMedia, opts) {
             if (!isucBrowser) {
@@ -174,10 +176,15 @@
         /**
          * 使用QQ浏览器分享
          *
+         * @public
          * @param {string} shareMedia 需要分享到的应用
-         * @param {string=} opts 分享参数，与构造函数一致
+         * @param {string=} opts 分享参数，与MShare构造函数一致
          */
         qqShareTo: function (shareMedia, opts) {
+            if (!isqqBrowser) {
+                return;
+            }
+
             if (browser && browser.app) {
                 browser.app.share({
                     url: opts.url,
@@ -185,7 +192,7 @@
                     description: opts.desc,
                     /* eslint-disable */
                     img_url: opts.pic,
-                    // 微信好友:1, 腾讯微博:2, QQ空间:3, QQ好友:4, 生成二维码:7, 微信朋友圈:8, 复制网址:10, 分享到微博:11, 创意分享:13
+                    // 1: 微信好友, 2: 腾讯微博, 3: QQ空间, 4: QQ好友, 5: 生成二维码, 8: 微信朋友圈, 10: 复制网址, 11: 分享到微博, 13: 创意分享
                     to_app: shareMediaMap[shareMedia][2], 
                     cus_txt: '请输入此时此刻想要分享的内容'
                     /* eslint-enable */
@@ -196,8 +203,9 @@
         /**
          * 使用web方式分享
          *
+         * @public
          * @param {string} shareMedia 需要分享到的应用
-         * @param {string=} opts 分享参数，与构造函数一致
+         * @param {string=} opts 分享参数，与MShare构造函数一致
          */
         webShareTo: function (shareMedia, opts) {
             var shareUrl;
@@ -224,6 +232,13 @@
         }
     };
 
+    /**
+     * 初始化
+     *
+     * @public
+     * @param {string=} opts 分享参数，与MShare构造函数一致
+     * @return {Object} MShare实例
+     */
     function init(opts) {
         return new MShare(opts);
     }
