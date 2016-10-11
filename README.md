@@ -5,13 +5,13 @@
 
 ## 使用方式
 
-1. 页面中嵌入js文件（同时支持AMD方式）
+Step.1 页面中嵌入js文件（同时支持AMD方式）
 
 ```html
 <script src="mshare.js"></script>
 ```
 
-2. 初始化配置
+Step.2 初始化配置
 
 ```javascript
 var myShare = mshare.init({
@@ -28,7 +28,7 @@ var myShare = mshare.init({
 });
 ```
 
-3. 分享到相应的社交媒体（可以根据不同的社交媒体，修改相应的配置）
+Step.3 分享到相应的社交媒体（可以根据不同的社交媒体，修改相应的配置）
 
 ```javascript
 // 分享到微博
