@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    <title>移动端分享组件 Demo</title>
+</head>
+<body>
+<h1>移动端分享组件 Demo</h1>
+<p>
+    分享到：
+    <a href="#" id="weibo" class="share-btn">微博</a>
+    <a href="#" id="weixinfriend" class="share-btn">朋友圈</a>
+    <a href="#" id="weixin" class="share-btn">微信好友</a>
+    <a href="#" id="qzone" class="share-btn">QQ空间</a>
+    <a href="#" id="qq" class="share-btn">QQ好友</a>
+    <a href="#" id="all" class="share-btn">更多</a>
+</p>
+<script src="/src/mshare.js"></script>
+<script>
+var shareBtn = document.querySelectorAll('.share-btn');
+
+var myShare = mshare.init({
+    title: '这是一条分享内容',
+    url: 'http://baidu.com',
+    pic: 'http://koubei.baidu.com/photo/gov_banner/saic.jpg',
+    method: 'app'
+});
+                
+for (var i = 0; i < shareBtn.length; i++) {
+    (function(index) {
+        var targetBtn = shareBtn[index];
+        targetBtn.addEventListener('click', function () {
+            switch (this.id) {
+                case 'weibo': 
+                    myShare.shareTo('weibo');
+                    break;
+                case 'weixin':
+                    myShare.shareTo('weixin');
+                    break;
+                case 'weixinfriend':
+                    myShare.shareTo('weixinfriend');
+                    break;
+                case 'qzone':
+                    myShare.shareTo('qzone', {
+                        title: '这是一条分享标题',
+                        summary: '这是一条分享摘要',
+                        desc: '这是一条用户评价'
+                    });
+                case 'qq':
+                    myShare.shareTo('qq');
+                    break;
+                case 'all':
+                    myShare.shareTo('all');
+                    break;
+            }
+        });
+    })(i) 
+}
+</script>
+</body>
+</html>
