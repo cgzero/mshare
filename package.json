@@ -1,0 +1,11 @@
+{
+  "name": "mshare",
+  "description": "mobile share libaray",
+  "version": "0.1.0",
+  "devDependencies": {
+    "gulp-connect": "^5.0.0",
+    "gulp-livereload": "^3.8.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^2.0.0"
+  }
+}
