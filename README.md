@@ -6,8 +6,8 @@
 
 ## 下载
 
-- 开发版：[点击下载](https://raw.githubusercontent.com/cgzero/mshare/master/src/mshare.js)
-- 生产版：[点击下载](https://raw.githubusercontent.com/cgzero/mshare/master/asset/mshare.min.js)
+- 开发版本（保留注释）：[点击下载](https://raw.githubusercontent.com/cgzero/mshare/master/src/mshare.js)
+- 生产版本（压缩后）：[点击下载](https://raw.githubusercontent.com/cgzero/mshare/master/asset/mshare.min.js)
 
 ## 使用方式
 
