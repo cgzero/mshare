@@ -38,24 +38,28 @@
     var UA = navigator.appVersion;
 
     // 是否为QQ浏览器
-    var isqqBrowser = /MQQBrowser/.test(UA);
+    var isqqbrowser = /MQQBrowser/.test(UA);
 
     // 是否为UC浏览器
-    var isucBrowser = /UCBrowser/.test(UA);
+    var isucbrowser = /UCBrowser/.test(UA);
 
-    // 分享媒体在各个浏览器所对应的名字，依次为安卓UC浏览器，苹果UC浏览器，QQ浏览器
+    // 是否为手机百度
+    var isbaidubox = /baiduboxapp/.test(UA);
+
+    // 分享媒体在各个浏览器所对应的名字，依次为安卓UC浏览器，苹果UC浏览器，QQ浏览器，手机百度
     var shareMediaMap = {
-        weibo: ['SinaWeibo', 'kSinaWeibo', 11],
-        weixin: ['WechatFriends', 'kWeixin', 1],
-        weixinfriend: ['WechatTimeline', 'kWeixinFriend', 8],
-        qq: ['QQ', 'kQQ', 4],
-        qzone: ['QZone', 'kQZone', 3],
-        all: ['', '']
+        weibo: ['SinaWeibo', 'kSinaWeibo', 11, 'sinaweibo'],
+        weixin: ['WechatFriends', 'kWeixin', 1, 'weixin_friend'],
+        weixinfriend: ['WechatTimeline', 'kWeixinFriend', 8, 'weixin_timeline'],
+        qq: ['QQ', 'kQQ', 4, 'qqfriend'],
+        qzone: ['QZone', 'kQZone', 3, 'qqdenglu'],
+        all: ['', '', undefined, 'all']
     };
 
     /**
      * 对象属性拷贝
      *
+     * @inner
      * @param {Object} target 目标对象
      * @param {...Object} source 源对象
      * @return {Object}
@@ -76,6 +80,19 @@
             }
         }
         return target;
+    }
+
+    /**
+     * 加载script
+     *
+     * @inner
+     * @param {string} url 加载的js地址
+     */
+    function loadScript(url) {
+        var script = document.createElement('script');
+        var doc = document.getElementsByTagName('body')[0];
+        script.setAttribute('src', url);
+        doc.appendChild(script);
     }
 
     /**
@@ -106,11 +123,12 @@
         extend(this.opts, opts);
 
         // 如果是QQ浏览器，则先加载必要的资源
-        if (isqqBrowser) {
-            var script = document.createElement('script');
-            var doc = document.getElementsByTagName('body')[0];
-            script.setAttribute('src', '//jsapi.qq.com/get?api=app.share');
-            doc.appendChild(script);
+        if (isqqbrowser) {
+            loadScript('//jsapi.qq.com/get?api=app.share');
+        }
+        // 如果是百度框，则先加载必要的资源
+        if (isbaidubox) {
+            loadScript('//s.bdstatic.com/common/openjs/aio.js?v=' + new Date().getTime());
         }
     }
 
@@ -132,19 +150,22 @@
         shareTo: function (shareMedia, opts) {
             shareMedia = shareMedia || 'all';
             opts = extend({}, this.opts, opts);
-
             // web方式分享
             // 只有微博和QQ空间支持
             if (opts.method === 'web' && /weibo|qzone/.test(shareMedia)) {
                 this.webShareTo(shareMedia, opts);
             }
             // UC浏览器
-            else if (isucBrowser) {
+            else if (isucbrowser) {
                 this.ucShareTo(shareMedia, opts);
             }
             // QQ浏览器
-            else if (isqqBrowser) {
+            else if (isqqbrowser) {
                 this.qqShareTo(shareMedia, opts);
+            }
+            // 手机百度
+            else if (isbaidubox) {
+                this.bdShareTo(shareMedia, opts);
             }
         },
 
@@ -156,7 +177,7 @@
          * @param {string=} opts 分享参数，与MShare构造函数一致
          */
         ucShareTo: function (shareMedia, opts) {
-            if (!isucBrowser) {
+            if (!isucbrowser) {
                 return;
             }
 
@@ -181,21 +202,63 @@
          * @param {string=} opts 分享参数，与MShare构造函数一致
          */
         qqShareTo: function (shareMedia, opts) {
-            if (!isqqBrowser) {
+            if (!isqqbrowser) {
                 return;
             }
 
-            if (browser && browser.app) {
-                browser.app.share({
-                    url: opts.url,
-                    title: opts.title,
-                    description: opts.desc,
-                    /* eslint-disable */
-                    img_url: opts.pic,
-                    // 1: 微信好友, 2: 腾讯微博, 3: QQ空间, 4: QQ好友, 5: 生成二维码, 8: 微信朋友圈, 10: 复制网址, 11: 分享到微博, 13: 创意分享
-                    to_app: shareMediaMap[shareMedia][2], 
-                    cus_txt: '请输入此时此刻想要分享的内容'
-                    /* eslint-enable */
+            if (!browser || !browser.app) {
+                return;
+            }
+
+            browser.app.share({
+                url: opts.url,
+                title: opts.title,
+                description: opts.summary,
+                /* eslint-disable */
+                img_url: opts.pic,
+                // 1: 微信好友, 2: 腾讯微博, 3: QQ空间, 4: QQ好友, 5: 生成二维码, 8: 微信朋友圈, 10: 复制网址, 11: 分享到微博, 13: 创意分享
+                to_app: shareMediaMap[shareMedia][2], 
+                cus_txt: '请输入此时此刻想要分享的内容'
+                /* eslint-enable */
+            });
+        },
+
+        /**
+         * 使用手机百度分享
+         *
+         * @public
+         * @param {string} shareMedia 需要分享到的应用
+         * @param {string=} opts 分享参数，与MShare构造函数一致
+         */
+        bdShareTo: function (shareMedia, opts){
+            if (!isbaidubox) {
+                return;
+            }
+
+            if (!Box) {
+                return;
+            }
+
+            var cfg = {
+                mediaType: shareMediaMap[shareMedia][3],
+                linkUrl: opts.url,
+                title: opts.title,
+                iconUrl: opts.pic,
+                content: opts.summary
+            };
+
+            if (Box.os.android) {
+                Box.android.invokeApp(
+                    'Bdbox_android_utils', 
+                    'callShare', 
+                    [JSON.stringify(cfg), window.successFnName || 'console.log', window.errorFnName || 'console.log']
+                );
+            } 
+            else {
+                Box.ios.invokeApp('callShare', {
+                    options: encodeURIComponent(JSON.stringify(cfg)),
+                    errorcallback: 'onFail',
+                    successcallback: 'onSuccess'
                 });
             }
         },
@@ -245,7 +308,8 @@
 
     return {
         init: init,
-        isqqBrowser: isqqBrowser,
-        isucBrowser: isucBrowser
+        isqqbrowser: isqqbrowser,
+        isucbrowser: isucbrowser,
+        isbaidubox: isbaidubox
     };
 });
