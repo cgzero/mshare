@@ -1,8 +1,13 @@
-# 移动web分享组件
+# mshare - 移动web分享组件
 
 适用于移动端的分享组件，为分享提供了核心接口。
 支持分享到：微博、微信朋友、朋友圈、QQ空间、QQ好友。
 支持平台：QQ浏览器、UC浏览器、手机百度（同时提供了Web原生的分享方式）。
+
+## 下载
+
+- 开发版：[点击下载](https://raw.githubusercontent.com/cgzero/mshare/master/src/mshare.js)
+- 生产版：[点击下载](https://raw.githubusercontent.com/cgzero/mshare/master/asset/mshare.min.js)
 
 ## 使用方式
 
