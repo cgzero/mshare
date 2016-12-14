@@ -104,11 +104,9 @@
      * @param {string=} opts.method 分享方式
      *     app: 才用浏览器分享api方式分享，只有分享到微博和QQ空间支持（默认）
      *     web: 网页方式
-     * @param {string=} opts.title 标题
+     * @param {string=} opts.title 分享内容
      * @param {string=} opts.url 分享链接
      * @param {Array=} opts.pic 分享图片
-     * @param {string=} opts.summary 分享摘要（QQ空间）
-     * @param {string=} opts.desc 分享理由（QQ空间）
      * @param {string=} opts.weiboAppKey 微博appKey（微博）
      * @param {Function=} opts.onsuccess 成功回调
      * @param {Function=} opts.onfail 失败回调
@@ -150,6 +148,7 @@
         shareTo: function (shareMedia, opts) {
             shareMedia = shareMedia || 'all';
             opts = extend({}, this.opts, opts);
+
             // web方式分享
             // 只有微博和QQ空间支持
             if (opts.method === 'web' && /weibo|qzone/.test(shareMedia)) {
@@ -182,15 +181,16 @@
             }
 
             // Android
+            // TODO Android分享到QQ空间无效，暂时无解
             if (typeof ucweb !== 'undefined') {
                 ucweb.startRequest(
                     'shell.page_share',
-                    [opts.title, opts.pic, opts.url, shareMediaMap[shareMedia][0], '', '', '']
+                    [opts.title, '', opts.url, shareMediaMap[shareMedia][0], '', '', '']
                 );
             }
             // ios
             else if (typeof ucbrowser !== 'undefined') {
-                ucbrowser.web_share(opts.title, opts.pic, opts.url, shareMediaMap[shareMedia][1], '', '', '');
+                ucbrowser.web_share(opts.title, '', opts.url, shareMediaMap[shareMedia][1], '', '', '');
             }
         },
 
@@ -212,13 +212,16 @@
 
             browser.app.share({
                 url: opts.url,
+                // 微信、QQ好友、QQ空间的分享头部
                 title: opts.title,
-                description: opts.summary,
+                // 为了简化，这里不设置分享摘要
+                description: '',
                 /* eslint-disable */
                 img_url: opts.pic,
                 // 1: 微信好友, 2: 腾讯微博, 3: QQ空间, 4: QQ好友, 5: 生成二维码, 8: 微信朋友圈, 10: 复制网址, 11: 分享到微博, 13: 创意分享
-                to_app: shareMediaMap[shareMedia][2], 
-                cus_txt: '请输入此时此刻想要分享的内容'
+                to_app: shareMediaMap[shareMedia][2],
+                // 微博的分享头部
+                cus_txt: opts.title
                 /* eslint-enable */
             });
         },
@@ -242,18 +245,21 @@
             var cfg = {
                 mediaType: shareMediaMap[shareMedia][3],
                 linkUrl: opts.url,
+                // 微信、QQ好友、QQ空间的分享头部
                 title: opts.title,
-                iconUrl: opts.pic,
-                content: opts.summary
+                iconUrl: opts.pic || '',
+                // 微信、QQ好友、QQ空间的分享摘要
+                // 微博的分享内容
+                content: opts.title
             };
 
             if (Box.os.android) {
                 Box.android.invokeApp(
-                    'Bdbox_android_utils', 
-                    'callShare', 
+                    'Bdbox_android_utils',
+                    'callShare',
                     [JSON.stringify(cfg), window.successFnName || 'console.log', window.errorFnName || 'console.log']
                 );
-            } 
+            }
             else {
                 Box.ios.invokeApp('callShare', {
                     options: encodeURIComponent(JSON.stringify(cfg)),
@@ -286,8 +292,8 @@
                     + SHARE_URL.QZONE
                     + '?url=' + opts.url
                     + '&title=' + opts.title
-                    + '&summary=' + opts.summary
-                    + '&desc=' + opts.desc
+                    // 为了简化，这里不设置分享摘要
+                    // + '&summary=' + ''
                     + '&pics=' + opts.pic;
             }
 

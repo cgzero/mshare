@@ -7,8 +7,8 @@
 </head>
 <body>
 <h1>移动端分享组件 Demo</h1>
+<p>分享到：</p>
 <p>
-    分享到：
     <a href="#" id="weibo" class="share-btn">微博</a>
     <a href="#" id="weixinfriend" class="share-btn">朋友圈</a>
     <a href="#" id="weixin" class="share-btn">微信好友</a>
@@ -21,9 +21,9 @@
 var shareBtn = document.querySelectorAll('.share-btn');
 
 var myShare = mshare.init({
-    title: '这是一条分享内容',
+    title: '这篇文章写的真不错',
     url: 'http://baidu.com',
-    pic: 'http://koubei.baidu.com/photo/gov_banner/saic.jpg',
+    pic: 'https://ts.bdimg.com/womc/photo/mem_banner/focus.png',
     method: 'app'
 });
 
@@ -32,7 +32,7 @@ for (var i = 0; i < shareBtn.length; i++) {
         var targetBtn = shareBtn[index];
         targetBtn.addEventListener('click', function () {
             switch (this.id) {
-                case 'weibo': 
+                case 'weibo':
                     myShare.shareTo('weibo');
                     break;
                 case 'weixin':
@@ -42,11 +42,7 @@ for (var i = 0; i < shareBtn.length; i++) {
                     myShare.shareTo('weixinfriend');
                     break;
                 case 'qzone':
-                    myShare.shareTo('qzone', {
-                        title: '这是一条分享标题',
-                        summary: '这是一条分享摘要',
-                        desc: '这是一条用户评价'
-                    });
+                    myShare.shareTo('qzone');
                     break;
                 case 'qq':
                     myShare.shareTo('qq');
@@ -56,7 +52,7 @@ for (var i = 0; i < shareBtn.length; i++) {
                     break;
             }
         });
-    })(i) 
+    })(i)
 }
 </script>
 </body>
