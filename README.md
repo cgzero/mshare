@@ -4,7 +4,7 @@
 支持分享到：微博、微信朋友、朋友圈、QQ空间、QQ好友。
 支持平台：QQ浏览器、UC浏览器、手机百度，同时提供了Web原生的分享方式。
 
-## 下载最新版（v0.1.0）
+## 下载最新版（v0.2.0）
 
 - 开发版本（保留注释）：[点击下载](https://raw.githubusercontent.com/cgzero/mshare/0.2.0/src/mshare.js)
 - 生产版本（压缩后）：[点击下载](https://raw.githubusercontent.com/cgzero/mshare/0.2.0/asset/mshare.min.js)
